@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enhancers Data</title>
+    <!-- Add any necessary CSS styles for card layout -->
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .card:hover {
+            background-color: #f0f0f0; /* Add hover effect */
+        }
+        #deco {
+            text-decoration: none;
+            color: inherit;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        .pagination a:hover {
+            background-color: #e0e0e0;
+        }
+        .pagination .current {
+            background-color: #007bff;
+            color: #fff;
+        }
+        /* Add more styles as needed */
+    </style>
+</head>
+<body>
+    <h1>Enhancers Data</h1>
+    <!-- Search bar -->
+    <form action="" method="GET" class="search-bar">
+        <input type="text" name="q" placeholder="Search by enhancer name">
+        <select name="year">
+            <option value="">Filter by Year</option>
+            <option value="2016">2016</option>
+            <option value="2015">2015</option>
+            <option value="2014">2014</option>
+            <option value="2013">2013</option>
+            <option value="2012">2012</option>
+            <option value="2009">2009</option>
+
+            <!-- Add more options for other years if needed -->
+        </select>
+        <button type="submit">Search</button>
+    </form>
+    
+    
+    <!-- Cards displaying search results -->
+    {% for item in page_data %}
+    <a href="{% url 'enhancer_detail' item.id %}" id="deco">
+        <div class="card">
+            <h2>{{ item.enhancer_name }}</h2>
+            <!-- <p><strong>Enhancer No:</strong> {{ item.enhancer_no }}</p> -->
+            <p><strong>Chromosome Number:</strong> {{ item.chromosome_number_as_reported }}</p>
+            <p><strong>Start Position:</strong> {{ item.start_position_as_reported }}</p>
+            <!-- Add other fields as needed -->
+        </div>
+    </a>
+    {% endfor %}
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        {% if page_data.has_previous %}
+            <a href="?page=1" id="deco">&laquo; First</a>
+            <a href="?page={{ page_data.previous_page_number }}" id="deco">Previous</a>
+        {% endif %}
+    
+        {% for num in page_data.paginator.page_range %}
+            {% if page_data.number == num %}
+                <span class="current" >{{ num }}</span>
+            {% else %}
+                <a href="?page={{ num }}" id="deco">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+    
+        {% if page_data.has_next %}
+            <a href="?page={{ page_data.next_page_number }}" id="deco">Next</a>
+            <a href="?page={{ page_data.paginator.num_pages }}" id="deco">Last &raquo;</a>
+        {% endif %}
+    </div>
+
+    
+</body>
+</html>
