@@ -6,6 +6,8 @@
 </head>
 <body>
     <h1>Enhancer Detail</h1>
+
+    <!-- Enhancer Details -->
     <h2>{{ item.enhancerName }}</h2>
     <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
     <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
@@ -15,5 +17,46 @@
     <p><strong>hg38 Chromosome:</strong> {{ item.hg38Chromosome }}</p>
     <p><strong>hg38 Start:</strong> {{ item.hg38Start }}</p>
     <p><strong>hg38 End:</strong> {{ item.hg38End }}</p>
+
+    <!-- Target Data -->
+    <h3>Related Targets</h3>
+    {% if target_data %}
+        <ul>
+        {% for target in target_data %}
+            <li>
+                <strong>Gene Name:</strong> {{ target.geneName }} <br>
+                <strong>Gene ID:</strong> {{ target.geneID }} <br>
+                <strong>Organ:</strong> {{ target.organ }} <br>
+                <strong>Tissue:</strong> {{ target.tissue }} <br>
+                <strong>Cell:</strong> {{ target.cell }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No related targets found.</p>
+    {% endif %}
+
+    <!-- Evidence Data -->
+    <h3>Related Evidence</h3>
+    {% if evidence_data %}
+        <ul>
+        {% for evidence in evidence_data %}
+            <li>
+                <strong>Title:</strong> {{ evidence.title }} <br>
+                <strong>First Author:</strong> {{ evidence.firstAuthor }} <br>
+                <strong>Year of Publication:</strong> {{ evidence.pubYear }} <br>
+                <strong>Journal:</strong> {{ evidence.journal }} <br>
+                <strong>DOI:</strong> {{ evidence.doi }} <br>
+                <strong>PMID:</strong> {{ evidence.pmid }} <br>
+                <strong>Curator:</strong> {{ evidence.curator }} <br>
+                <strong>Date:</strong> {{ evidence.date }} <br>
+                <strong>Comments:</strong> {{ evidence.comments }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No related evidence found.</p>
+    {% endif %}
+
 </body>
 </html>

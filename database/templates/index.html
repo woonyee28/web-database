@@ -41,36 +41,69 @@
 </head>
 <body>
     <h1>Enhancers Data</h1>
+
+    {% if warning_message %}
+    <p style="color: red;"><strong>{{ warning_message }}</strong></p>
+    {% endif %}
+
     <!-- Search bar -->
     <form action="" method="GET" class="search-bar">
-        <input type="text" name="q" placeholder="Search by enhancer name">
-        <select name="year">
-            <option value="">Filter by Year</option>
-            <option value="2016">2016</option>
-            <option value="2015">2015</option>
-            <option value="2014">2014</option>
-            <option value="2013">2013</option>
-            <option value="2012">2012</option>
-            <option value="2009">2009</option>
-
-            <!-- Add more options for other years if needed -->
+        <select name="search_type" id="search_type" onchange="updateSearchFields()">
+            <option value="hg38" {% if request.GET.search_type == 'hg38' %}selected{% endif %}>Search by hg38 Chromosome</option>
+            <option value="reported" {% if request.GET.search_type == 'reported' %}selected{% endif %}>Search by Chromosome as Reported</option>
+            <option value="target" {% if request.GET.search_type == 'target' %}selected{% endif %}>Search by Target</option>
         </select>
+
+        <!-- hg38 Chromosome Search Fields -->
+        <div id="hg38_fields" style="{% if request.GET.search_type != 'hg38' %}display:none;{% endif %}">
+            <input type="text" name="hg38_chromosome" placeholder="hg38 Chromosome" value="{{ request.GET.hg38_chromosome }}">
+            <input type="text" name="hg38_start" placeholder="hg38 Start" value="{{ request.GET.hg38_start }}">
+            <input type="text" name="hg38_end" placeholder="hg38 End" value="{{ request.GET.hg38_end }}">
+        </div>
+
+        <!-- Chromosome as Reported Search Fields -->
+        <div id="reported_fields" style="{% if request.GET.search_type != 'reported' %}display:none;{% endif %}">
+            <input type="text" name="organism" placeholder="Organism" value="{{ request.GET.organism }}">
+            <input type="text" name="genome_assembly" placeholder="Genome Assembly" value="{{ request.GET.genome_assembly }}">
+            <input type="text" name="chromosome_number" placeholder="Chromosome Number" value="{{ request.GET.chromosome_number }}">
+            <input type="text" name="start" placeholder="Start" value="{{ request.GET.start }}">
+            <input type="text" name="end" placeholder="End" value="{{ request.GET.end }}">
+        </div>
+
+        <!-- Target Search Fields -->
+        <div id="target_fields" style="{% if request.GET.search_type != 'target' %}display:none;{% endif %}">
+            <input type="text" name="target_gene" placeholder="Target Gene" value="{{ request.GET.target_gene }}">
+            <input type="text" name="organ" placeholder="Organ" value="{{ request.GET.organ }}">
+            <input type="text" name="tissue" placeholder="Tissue" value="{{ request.GET.tissue }}">
+            <input type="text" name="cell" placeholder="Cell" value="{{ request.GET.cell }}">
+        </div>
+
         <button type="submit">Search</button>
     </form>
+
+    <script>
+        function updateSearchFields() {
+            const searchType = document.getElementById('search_type').value;
+            document.getElementById('hg38_fields').style.display = searchType === 'hg38' ? 'block' : 'none';
+            document.getElementById('reported_fields').style.display = searchType === 'reported' ? 'block' : 'none';
+            document.getElementById('target_fields').style.display = searchType === 'target' ? 'block' : 'none';
+        }
+    </script>
     
     
     <!-- Cards displaying search results -->
     {% for item in page_data %}
     <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
         <div class="card">
-            <h2>{{ item.enhancer_name }}</h2>
-            <!-- <p><strong>Enhancer No:</strong> {{ item.enhancer_no }}</p> -->
-            <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
-            <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
-            <!-- Add other fields as needed -->
+            <h2>Enhancer ID: {{ item.enhancerID }}</h2>
+            <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
+            <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
+            <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
+            <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
         </div>
     </a>
     {% endfor %}
+    
 
     <!-- Pagination controls -->
     <div class="pagination">
