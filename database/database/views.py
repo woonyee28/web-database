@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Enhancers2016
+from .models import Enhancer
 from django.core.paginator import Paginator
 
 
@@ -7,7 +7,7 @@ def main_page_view(request):
     search_query = request.GET.get('q')
     year_filter = request.GET.get('year')
     
-    data = Enhancers2016.objects.all()  # Retrieve all records initially
+    data = Enhancer.objects.all()  # Retrieve all records initially
     
     if search_query:
         data = data.filter(enhancer_name__icontains=search_query)
@@ -26,6 +26,6 @@ def main_page_view(request):
 
 
 def enhancer_detail_view(request, id):
-    enhancer = get_object_or_404(Enhancers2016, id=id)
+    enhancer = get_object_or_404(Enhancer, enhancerID=id)
     return render(request, 'enhancer_detail.html', {'item': enhancer})
 

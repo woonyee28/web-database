@@ -1,38 +1,65 @@
 from django.db import models
 
-class Enhancers2016(models.Model):
-    id = models.IntegerField(db_column='id',primary_key=True)  # Add this line for the primary key
-    enhancer_no = models.IntegerField(db_column='Enhancer No.')
-    enhancer_name = models.TextField(db_column='Enhancer name')
-    chromosome_number_as_reported = models.IntegerField(db_column='Chromosome number (as reported)')
-    start_position_as_reported = models.IntegerField(db_column='Start Position (as reported)')
-    end_position_as_reported = models.IntegerField(db_column='End Position (as reported)')
-    genome_assembly_as_reported = models.TextField(db_column='Genome Assembly (as reported)')
-    organism = models.TextField()
-    hg38_chromosome = models.IntegerField(db_column='hg38 Chromosome')
-    hg38_start = models.IntegerField(db_column='hg38 Start')
-    hg38_end = models.IntegerField(db_column='hg38 End')
-    target_gene = models.TextField(db_column='Target Gene')
-    gene_id_target = models.IntegerField(db_column='Gene ID (Target)')
-    organ = models.TextField()
-    tissue = models.TextField()
-    cell = models.TextField()
-    functional_yn = models.TextField(db_column='Functional Y/N')
-    method_assay = models.TextField(db_column='Method / Assay')
-    relevant_text = models.TextField(db_column='Relevant Text')
-    page_of_text = models.IntegerField(db_column='Page of Text')
-    source_title = models.TextField(db_column='Source Title')
-    source_author_first = models.TextField(db_column='Source Author (first Author only)')
-    source_year_of_publication = models.IntegerField(db_column='Source Year of Publication')
-    source_journal = models.TextField(db_column='Source Journal')
-    source_volume_and_page_numbers = models.TextField(db_column='Source Volume and Page Numbers')
-    doi = models.TextField()
-    pmid = models.IntegerField()
-    curator = models.TextField()
-    date = models.TextField()
-    comments = models.TextField()
-    year = models.IntegerField(db_column='Sheet Name')
+class Enhancer(models.Model):
+    enhancerID = models.AutoField(primary_key=True)
+    enhancerName = models.CharField(max_length=255)
+    chromosomeNumberAsReported = models.IntegerField()
+    startAsReported = models.IntegerField()
+    endAsReported = models.IntegerField()
+    genomeAssemblyAsReported = models.CharField(max_length=255)
+    organism = models.CharField(max_length=255)
+    hg38Chromosome = models.IntegerField()
+    hg38Start = models.IntegerField()
+    hg38End = models.IntegerField()
 
     class Meta:
+        unique_together = (('enhancerName', 'chromosomeNumberAsReported', 'startAsReported', 'endAsReported', 'genomeAssemblyAsReported'),)
         managed = False
-        db_table = 'enhancers'  # Adjust the table name accordingly
+        db_table = 'enhancers'
+
+class Target(models.Model):
+    targetID = models.AutoField(primary_key=True)
+    geneName = models.CharField(max_length=255)
+    geneID = models.IntegerField()
+    organ = models.CharField(max_length=255)
+    tissue = models.CharField(max_length=255)
+    cell = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = (('geneName', 'geneID', 'organ', 'tissue', 'cell'),)
+        managed = False  
+        db_table = 'targets'
+
+class Evidence(models.Model):
+    evidenceID = models.AutoField(primary_key=True)
+    functionalYN = models.CharField(max_length=3)  # Assuming "Y/N" or similar short text
+    methodAssay = models.CharField(max_length=255)
+    relevantText = models.TextField()
+    page = models.IntegerField()
+    title = models.CharField(max_length=255)
+    firstAuthor = models.CharField(max_length=255)
+    pubYear = models.IntegerField()
+    journal = models.CharField(max_length=255)
+    volumePageNumber = models.CharField(max_length=255)
+    doi = models.CharField(max_length=255)
+    pmid = models.IntegerField()
+    curator = models.CharField(max_length=255)
+    date = models.DateField()
+    comments = models.TextField()
+
+    class Meta:
+        unique_together = (('relevantText', 'pmid', 'comments', 'methodAssay', 'functionalYN'),)
+        managed = False 
+        db_table = 'evidence'
+
+
+class Activity(models.Model):
+    activityID = models.AutoField(primary_key=True)
+    evidenceID = models.ForeignKey(Evidence, on_delete=models.CASCADE, db_column='evidenceID')
+    targetID = models.ForeignKey(Target, on_delete=models.CASCADE, db_column='targetID')
+    enhancerID = models.ForeignKey(Enhancer, on_delete=models.CASCADE, db_column='enhancerID')
+
+    class Meta:
+        managed = False 
+        db_table = 'activity'
+

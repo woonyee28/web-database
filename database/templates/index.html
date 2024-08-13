@@ -61,12 +61,12 @@
     
     <!-- Cards displaying search results -->
     {% for item in page_data %}
-    <a href="{% url 'enhancer_detail' item.id %}" id="deco">
+    <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
         <div class="card">
             <h2>{{ item.enhancer_name }}</h2>
             <!-- <p><strong>Enhancer No:</strong> {{ item.enhancer_no }}</p> -->
-            <p><strong>Chromosome Number:</strong> {{ item.chromosome_number_as_reported }}</p>
-            <p><strong>Start Position:</strong> {{ item.start_position_as_reported }}</p>
+            <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
+            <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
             <!-- Add other fields as needed -->
         </div>
     </a>
