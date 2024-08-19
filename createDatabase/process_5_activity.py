@@ -30,7 +30,7 @@ UPDATE temp
 SET enhancer_id = (
     SELECT e.enhancerID
     FROM enhancers e
-    WHERE e.chromosomeNumberAsReported = temp.chromosomeNumberAsReported AND (e.enhancerName = temp.enhancerName OR (e.enhancerName IS NULL AND temp.enhancerName IS NULL)) AND e.startAsReported = temp.startAsReported AND e.endAsReported = temp.endAsReported AND e.genomeAssemblyAsReported = temp.genomeAssemblyAsReported
+    WHERE e.chromosomeNumberAsReported = temp.chromosomeNumberAsReported AND (e.enhancerName = temp.enhancerName OR (e.enhancerName IS NULL AND temp.enhancerName IS NULL)) AND e.startAsReported = temp.startAsReported AND e.endAsReported = temp.endAsReported AND (e.genomeAssemblyAsReported = temp.genomeAssemblyAsReported OR (e.genomeAssemblyAsReported IS NULL AND temp.genomeAssemblyAsReported IS NULL))
 );
 """
 
