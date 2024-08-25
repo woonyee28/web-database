@@ -23,9 +23,12 @@ def main_page_enhancer_view(request):
                 if end - start > 1000000:
                     warning_message = "Warning: The difference between end and start positions must be less than 1 million."
                 else:
-                    data = data.filter(hg38Chromosome=chromosome, hg38Start__gte=start, hg38End__lte=end)
+                    data = data.filter(hg38Chromosome=chromosome, hg38Start=start, hg38End=end)
             except ValueError:
                 warning_message = "Start and End positions must be valid integers."
+        elif chromosome:
+            data = data.filter(hg38Chromosome=chromosome)
+
     
     elif search_type == 'reported':
         organism = request.GET.get('organism')
