@@ -19,7 +19,7 @@
             position: relative;
             display: inline-block;
             width: 100%;
-            max-width: 300px;
+            max-width: 350px;
             margin-bottom: 20px;
         }
 
@@ -167,17 +167,15 @@
         <!-- hg38 Chromosome Search Fields -->
         <div id="hg38_fields" class="input-group" style="display: {% if request.GET.search_type == 'hg38' %}flex{% else %}none{% endif %};">
             <input type="text" name="hg38_chromosome" placeholder="hg38 Chromosome" value="{{ request.GET.hg38_chromosome }}">
-            <input type="text" name="hg38_start" placeholder="hg38 Start" value="{{ request.GET.hg38_start }}">
-            <input type="text" name="hg38_end" placeholder="hg38 End" value="{{ request.GET.hg38_end }}">
         </div>
 
         <!-- Chromosome as Reported Search Fields -->
         <div id="reported_fields" class="input-group" style="display: {% if request.GET.search_type == 'reported' %}flex{% else %}none{% endif %};">
-            <input type="text" name="organism" placeholder="Organism" value="{{ request.GET.organism }}">
-            <input type="text" name="genome_assembly" placeholder="Genome Assembly" value="{{ request.GET.genome_assembly }}">
+            <select name="organism" id="organism" >
+                <option value="Human" {% if request.GET.organism == 'Human' %}selected{% endif %}>Human</option>
+                <option value="Mouse" {% if request.GET.organism == 'Mouse' %}selected{% endif %}>Mouse</option>
+            </select>
             <input type="text" name="chromosome_number" placeholder="Chromosome Number" value="{{ request.GET.chromosome_number }}">
-            <input type="text" name="start" placeholder="Start" value="{{ request.GET.start }}">
-            <input type="text" name="end" placeholder="End" value="{{ request.GET.end }}">
         </div>
 
         <!-- Target Search Fields -->

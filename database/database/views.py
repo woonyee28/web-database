@@ -12,48 +12,23 @@ def main_page_enhancer_view(request):
     
     if search_type == 'hg38':
         chromosome = request.GET.get('hg38_chromosome')
-        start = request.GET.get('hg38_start')
-        end = request.GET.get('hg38_end')
         
-        if chromosome and start and end:
-            try:
-                start = int(start)
-                end = int(end)
-                
-                if end - start > 1000000:
-                    warning_message = "Warning: The difference between end and start positions must be less than 1 million."
-                else:
-                    data = data.filter(hg38Chromosome=chromosome, hg38Start=start, hg38End=end)
-            except ValueError:
-                warning_message = "Start and End positions must be valid integers."
-        elif chromosome:
+        if chromosome:
             data = data.filter(hg38Chromosome=chromosome)
 
     
     elif search_type == 'reported':
         organism = request.GET.get('organism')
-        genome_assembly = request.GET.get('genome_assembly')
         chromosome_number = request.GET.get('chromosome_number')
-        start = request.GET.get('start')
-        end = request.GET.get('end')
         
-        if organism and genome_assembly and chromosome_number and start and end:
-            try:
-                start = int(start)
-                end = int(end)
-                
-                if end - start > 1000000:
-                    warning_message = "Warning: The difference between end and start positions must be less than 1 million."
-                else:
-                    data = data.filter(
-                        organism=organism,
-                        genomeAssemblyAsReported=genome_assembly,
-                        chromosomeNumberAsReported=chromosome_number,
-                        startAsReported__gte=start,
-                        endAsReported__lte=end
-                    )
-            except ValueError:
-                warning_message = "Start and End positions must be valid integers."
+        if not organism or not chromosome_number:
+            warning_message = "Please fill in both the 'Organism' and 'Chromosome Number' fields."
+        else:
+            data = data.filter(
+                organism=organism,
+                chromosomeNumberAsReported=chromosome_number
+            )
+
 
     elif search_type == 'target':
         target_gene = request.GET.get('target_gene')

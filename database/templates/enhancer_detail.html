@@ -53,16 +53,25 @@ p.no-data {
 <body>
     <h1>Enhancer Detail</h1>
 
-    <!-- Enhancer Details -->
-    <h2>{{ item.enhancerName }}</h2>
-    <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
-    <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
-    <p><strong>End Position:</strong> {{ item.endAsReported }}</p>
-    <p><strong>Genome Assembly:</strong> {{ item.genomeAssemblyAsReported }}</p>
-    <p><strong>Organism:</strong> {{ item.organism }}</p>
-    <p><strong>hg38 Chromosome:</strong> {{ item.hg38Chromosome }}</p>
-    <p><strong>hg38 Start:</strong> {{ item.hg38Start }}</p>
-    <p><strong>hg38 End:</strong> {{ item.hg38End }}</p>
+    <!-- Genomic Position as Originally Reported -->
+    <div class="genomic-position">
+        <h2>Genomic Position as Originally Reported</h2>
+        <hr>
+        <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
+        <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
+        <p><strong>End Position:</strong> {{ item.endAsReported }}</p>
+        <p><strong>Genome Assembly:</strong> {{ item.genomeAssemblyAsReported }}</p>
+        <p><strong>Organism:</strong> {{ item.organism }}</p>
+    </div>
+
+    <!-- Conserved Sequence found in Human hg38 Genome -->
+    <div class="conserved-sequence">
+        <h2>Sequence found in Human hg38 Genome</h2>
+        <hr>
+        <p><strong>hg38 Chromosome:</strong> {{ item.hg38Chromosome }}</p>
+        <p><strong>hg38 Start:</strong> {{ item.hg38Start }}</p>
+        <p><strong>hg38 End:</strong> {{ item.hg38End }}</p>
+    </div>
 
     <!-- Target Data -->
     <h3>Related Targets</h3>
@@ -71,7 +80,10 @@ p.no-data {
         {% for target in target_data %}
             <li>
                 <strong>Gene Name:</strong> {{ target.geneName }} <br>
-                <strong>Gene ID:</strong> {{ target.geneID }} <br>
+                <strong>Gene ID:</strong> 
+                    <a href="https://www.ncbi.nlm.nih.gov/gene/{{ target.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                        {{ target.geneID }} 🔗
+                    </a><br>
                 <strong>Organ:</strong> {{ target.organ }} <br>
                 <strong>Tissue:</strong> {{ target.tissue }} <br>
                 <strong>Cell:</strong> {{ target.cell }}
@@ -83,7 +95,7 @@ p.no-data {
     {% endif %}
 
     <!-- Evidence Data -->
-    <h3>Related Evidence</h3>
+    <h3>Related Literature</h3>
     {% if evidence_data %}
         <ul>
         {% for evidence in evidence_data %}
@@ -93,10 +105,13 @@ p.no-data {
                 <strong>Year of Publication:</strong> {{ evidence.pubYear }} <br>
                 <strong>Journal:</strong> {{ evidence.journal }} <br>
                 <strong>DOI:</strong> {{ evidence.doi }} <br>
-                <strong>PMID:</strong> {{ evidence.pmid }} <br>
+                <strong>PMID:</strong> 
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/{{ evidence.pmid }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                        {{ evidence.pmid }} 🔗
+                    </a> 
+                    <br>
                 <strong>Curator:</strong> {{ evidence.curator }} <br>
-                <strong>Date:</strong> {{ evidence.date }} <br>
-                <strong>Comments:</strong> {{ evidence.comments }}
+                <strong>Relevant Text:</strong> {{ evidence.relevantText }} <br>
             </li>
         {% endfor %}
         </ul>
