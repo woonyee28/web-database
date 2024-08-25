@@ -100,6 +100,31 @@
             border-color: #D8BFD8; /* Lighter lilac on hover */
         }
 
+        .alphabet-buttons {
+            display: none; /* Initially hidden */
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alphabet-buttons button {
+            padding: 10px;
+            background-color: #222;
+            color: #eaeaea;
+            border: 1px solid #C8A2C8;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 40px;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .alphabet-buttons button:hover {
+            background-color: #333; /* Slightly lighter dark on hover */
+            border-color: #D8BFD8; /* Lighter lilac on hover */
+        }
+
         .card {
             border: 1px solid #C8A2C8; /* Lilac border */
             border-radius: 10px;
@@ -160,7 +185,7 @@
             <select name="search_type" id="search_type" onchange="updateSearchFields()">
                 <option value="hg38" {% if request.GET.search_type == 'hg38' or request.GET.search_type is not defined %}selected{% endif %}>Search by hg38 Chromosome</option>
                 <option value="reported" {% if request.GET.search_type == 'reported' %}selected{% endif %}>Search by Chromosome as Reported</option>
-                <option value="target" {% if request.GET.search_type == 'target' %}selected{% endif %}>Search by Target</option>
+                <option value="target" {% if request.GET.search_type == 'target' %}selected{% endif %}>Search by Target (Gene)</option>
             </select>
         </div>
 
@@ -179,64 +204,104 @@
         </div>
 
         <!-- Target Search Fields -->
-        <div id="target_fields" class="input-group" style="display: {% if request.GET.search_type == 'target' %}flex{% else %}none{% endif %};">
-            <input type="text" name="target_gene" placeholder="Target Gene" value="{{ request.GET.target_gene }}">
-            <input type="text" name="organ" placeholder="Organ" value="{{ request.GET.organ }}">
-            <input type="text" name="tissue" placeholder="Tissue" value="{{ request.GET.tissue }}">
-            <input type="text" name="cell" placeholder="Cell" value="{{ request.GET.cell }}">
+        <div id="target_fields" class="alphabet-buttons">
+            {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+            <button type="submit" name="target_gene" value="{{ letter }}">{{ letter }}</button>
+            {% endfor %}
         </div>
 
         <button type="submit" class="btn-search">Search</button>
     </form>
 
     <script>
-        function updateSearchFields() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialSearchType = document.getElementById('search_type').value;
+
+            document.getElementById('search_type').addEventListener('change', function() {
+                const currentSearchType = document.getElementById('search_type').value;
+                if (currentSearchType !== initialSearchType) {
+                    updateSearchFields(initialSearchType);
+                }
+            });
+
+            // Initially update the fields based on the current selection
+            updateSearchFields(initialSearchType);
+        });
+
+        function updateSearchFields(initialSearchType) {
             const searchType = document.getElementById('search_type').value;
 
-            // Clear and hide all fields, including placeholders
-            const hg38Fields = document.querySelectorAll('#hg38_fields input');
-            const reportedFields = document.querySelectorAll('#reported_fields input');
-            const targetFields = document.querySelectorAll('#target_fields input');
+            // Hide all fields initially
+            document.getElementById('hg38_fields').style.display = 'none';
+            document.getElementById('reported_fields').style.display = 'none';
+            document.getElementById('target_fields').style.display = 'none';
 
-            hg38Fields.forEach(field => {
-                field.value = ''; // Clear the input field value
-                field.parentElement.style.display = 'none'; // Hide the field's container
-            });
-
-            reportedFields.forEach(field => {
-                field.value = ''; // Clear the input field value
-                field.parentElement.style.display = 'none'; // Hide the field's container
-            });
-
-            targetFields.forEach(field => {
-                field.value = ''; // Clear the input field value
-                field.parentElement.style.display = 'none'; // Hide the field's container
-            });
-
-            // Show the fields related to the selected search type
+            // Show relevant fields based on search type
             if (searchType === 'hg38') {
-                hg38Fields.forEach(field => field.parentElement.style.display = 'flex');
+                document.getElementById('hg38_fields').style.display = 'flex';
             } else if (searchType === 'reported') {
-                reportedFields.forEach(field => field.parentElement.style.display = 'flex');
+                document.getElementById('reported_fields').style.display = 'flex';
             } else if (searchType === 'target') {
-                targetFields.forEach(field => field.parentElement.style.display = 'flex');
+                document.getElementById('target_fields').style.display = 'flex';
+            }
+
+            // Only submit the form if the search type was actually changed
+            if (searchType !== initialSearchType) {
+                document.querySelector('.search-bar').submit();
             }
         }
     </script>
     
     
     <!-- Cards displaying search results -->
-    {% for item in page_data %}
-    <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
-        <div class="card">
-            <h2>Enhancer ID: {{ item.enhancerID }}</h2>
-            <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
-            <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
-            <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
-            <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
-        </div>
-    </a>
-    {% endfor %}
+    {% if search_type == 'target' and not target_clicked %}
+        {% for item in page_data %}
+            <a href="?search_type=target&target_clicked={{ item.geneID }}" id="deco">
+                <div class="card">
+                    <h2>Target Name: {{ item.geneName }}</h2>
+                    <p><strong>Target ID:</strong> 
+                        <a href="https://www.ncbi.nlm.nih.gov/gene/{{ item.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                            {{ item.geneID }} 🔗
+                        </a>
+                    </p>
+                </div>
+            </a>
+        {% endfor %}
+    {% elif target_clicked %}
+        <h2>Target: {{ target_info.geneName }}</h2>
+        <p><strong>Target ID:</strong> {{ target_info.geneID }}</p>
+
+        <h3>Related Enhancers</h3>
+        {% if enhancers %}
+            {% for enhancer in enhancers %}
+                <a href="{% url 'enhancer_detail' enhancer.enhancerID %}" id="deco">
+                    <div class="card">
+                        <h2>Enhancer ID: {{ enhancer.enhancerID }}</h2>
+                        <p><strong>Genome Assembly As Reported:</strong> {{ enhancer.genomeAssemblyAsReported }}</p>
+                        <p><strong>Chromosome Number As Reported:</strong> {{ enhancer.chromosomeNumberAsReported }}</p>
+                        <p><strong>Start Position As Reported:</strong> {{ enhancer.startAsReported }}</p>
+                        <p><strong>End Position As Reported:</strong> {{ enhancer.endAsReported }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>No related enhancers found.</p>
+        {% endif %}
+    {% else %}
+        {% for item in page_data %}
+            <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
+                <div class="card">
+                    <h2>Enhancer ID: {{ item.enhancerID }}</h2>
+                    <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
+                    <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
+                    <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
+                    <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    {% endif %}
+
+
     
 
     <!-- Pagination controls -->

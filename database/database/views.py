@@ -2,74 +2,62 @@ from django.shortcuts import render, get_object_or_404
 from .models import Enhancer, Target, Activity, Evidence
 from django.core.paginator import Paginator
 
+
 def main_page_enhancer_view(request):
     search_type = request.GET.get('search_type')
-    start = request.GET.get('start')
-    end = request.GET.get('end')
-    warning_message = None 
-    
-    data = Enhancer.objects.all()  # Retrieve all records initially
+    target_clicked = request.GET.get('target_clicked')
+    data = None
+    enhancers = None
+    target_info = None  # Variable to store geneID and geneName
     
     if search_type == 'hg38':
+        data = Enhancer.objects.all()
         chromosome = request.GET.get('hg38_chromosome')
         
         if chromosome:
             data = data.filter(hg38Chromosome=chromosome)
-
     
     elif search_type == 'reported':
+        data = Enhancer.objects.all()
         organism = request.GET.get('organism')
         chromosome_number = request.GET.get('chromosome_number')
         
-        if not organism or not chromosome_number:
-            warning_message = "Please fill in both the 'Organism' and 'Chromosome Number' fields."
-        else:
-            data = data.filter(
-                organism=organism,
-                chromosomeNumberAsReported=chromosome_number
-            )
-
+        if organism and chromosome_number:
+            data = data.filter(organism=organism, chromosomeNumberAsReported=chromosome_number)
 
     elif search_type == 'target':
         target_gene = request.GET.get('target_gene')
-        organ = request.GET.get('organ')
-        tissue = request.GET.get('tissue')
-        cell = request.GET.get('cell')
+        data = Target.objects.all()
         
-        if target_gene or organ or tissue or cell:
-            # Filter targets based on the search criteria
-            targets = Target.objects.all()
+        if target_gene:
+            target_gene = target_gene.lower()
+            data = data.filter(geneName__istartswith=target_gene)
+        
+        # If a target is clicked, find related enhancers
+        if target_clicked:
+            targets = Target.objects.filter(geneID=target_clicked)
             
-            if target_gene:
-                targets = targets.filter(geneID__icontains=target_gene)
-            if organ:
-                targets = targets.filter(organ__icontains=organ)
-            if tissue:
-                targets = targets.filter(tissue__icontains=tissue)
-            if cell:
-                targets = targets.filter(cell__icontains=cell)
+            # Store the geneID and geneName of the first matched target
+            if targets.exists():
+                target_info = {
+                    'geneID': targets.first().geneID,
+                    'geneName': targets.first().geneName
+                }
             
-            # Get the IDs of the matching targets
-            target_ids = targets.values_list('targetID', flat=True)
+            enhancer_ids = Activity.objects.filter(targetID__in=targets.values_list('targetID', flat=True)).values_list('enhancerID', flat=True)
+            enhancers = Enhancer.objects.filter(enhancerID__in=enhancer_ids)
             
-            # Find all activities related to the matching targets
-            activities = Activity.objects.filter(targetID__in=target_ids)
-            
-            # Get the IDs of the related enhancers
-            enhancer_ids = activities.values_list('enhancerID', flat=True)
-            
-            # Filter enhancers based on the related enhancer IDs
-            data = data.filter(enhancerID__in=enhancer_ids)
-
-    # Pagination for Enhancer data
-    items_per_page = 30
-    paginator = Paginator(data, items_per_page)
-    page_number = request.GET.get('page', 1)
-    page_data = paginator.get_page(page_number)
-
+            if enhancers.exists():
+                print("There are enhancers related to this target.")
+            else:
+                print("No enhancers found for this target.")
+    
     return render(request, 'index.html', {
-        'page_data': page_data,
-        'warning_message': warning_message
+        'page_data': data,
+        'enhancers': enhancers,
+        'target_info': target_info,  # Pass the target info to the template
+        'search_type': search_type,
+        'target_clicked': target_clicked,
     })
 
 def enhancer_detail_view(request, id):
