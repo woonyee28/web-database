@@ -196,10 +196,12 @@
 
         <!-- Chromosome as Reported Search Fields -->
         <div id="reported_fields" class="input-group" style="display: {% if request.GET.search_type == 'reported' %}flex{% else %}none{% endif %};">
+            <div class="select-wrapper" style="margin-bottom: 0px;">
             <select name="organism" id="organism" >
                 <option value="Human" {% if request.GET.organism == 'Human' %}selected{% endif %}>Human</option>
                 <option value="Mouse" {% if request.GET.organism == 'Mouse' %}selected{% endif %}>Mouse</option>
             </select>
+            </div>
             <input type="text" name="chromosome_number" placeholder="Chromosome Number" value="{{ request.GET.chromosome_number }}">
         </div>
 

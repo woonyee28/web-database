@@ -5,50 +5,80 @@
     <title>Enhancer Detail</title>
 </head>
 <style>
+    /* Your existing CSS styles */
     body {
-    background-color: #000; /* Black background */
-    color: #eaeaea; /* Light text color for contrast */
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 20px;
-}
+        background-color: #000;
+        color: #eaeaea;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
 
-h1, h2, h3 {
-    color: #C8A2C8; /* Lilac color for headings */
-    margin-bottom: 20px;
-}
+    h1, h2, h3 {
+        color: #C8A2C8;
+        margin-bottom: 20px;
+    }
 
-p, li {
-    margin-bottom: 10px;
-    line-height: 1.6;
-}
+    p, li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
 
-strong {
-    color: #D8BFD8; /* Slightly lighter lilac for emphasis */
-}
+    strong {
+        color: #D8BFD8;
+    }
 
-ul {
-    list-style-type: none;
-    padding-left: 0;
-}
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
 
-ul li {
-    background-color: #222; /* Dark background for list items */
-    border: 1px solid #C8A2C8; /* Lilac border for list items */
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
+    ul li {
+        background-color: #222;
+        border: 1px solid #C8A2C8;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
 
-ul li:hover {
-    background-color: #333; /* Slightly lighter dark on hover */
-    border-color: #D8BFD8; /* Lighter lilac on hover */
-}
+    ul li:hover {
+        background-color: #333;
+        border-color: #D8BFD8;
+    }
 
-p.no-data {
-    color: #ff6b6b; /* Light red for "No data found" message */
-}
+    code {
+        display: block;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background-color: #222;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    a.genome-browser-link {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #C8A2C8;
+        color: #000;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    a.genome-browser-link:hover {
+        background-color: #D8BFD8;
+    }
+
+    p.no-data {
+        color: #ff6b6b;
+    }
+
+    #genome-browser-section {
+        display: none;
+    }
 </style>
 <body>
     <h1>Enhancer Detail</h1>
@@ -57,6 +87,7 @@ p.no-data {
     <div class="genomic-position">
         <h2>Genomic Position as Originally Reported</h2>
         <hr>
+        <p><strong>Enhancer Name:</strong> {{ item.enhancerName }}</p>
         <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
         <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
         <p><strong>End Position:</strong> {{ item.endAsReported }}</p>
@@ -80,19 +111,26 @@ p.no-data {
         {% for target in target_data %}
             <li>
                 <strong>Gene Name:</strong> {{ target.geneName }} <br>
-                <strong>Gene ID:</strong> 
-                    <a href="https://www.ncbi.nlm.nih.gov/gene/{{ target.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
-                        {{ target.geneID }} 🔗
-                    </a><br>
+                <strong>Gene ID:</strong>
+                <a href="https://www.ncbi.nlm.nih.gov/gene/{{ target.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                    {{ target.geneID }} 🔗
+                </a><br>
                 <strong>Organ:</strong> {{ target.organ }} <br>
                 <strong>Tissue:</strong> {{ target.tissue }} <br>
-                <strong>Cell:</strong> {{ target.cell }}
+                <strong>Cell:</strong> {{ target.cell }} <br>
             </li>
         {% endfor %}
         </ul>
     {% else %}
         <p>No related targets found.</p>
     {% endif %}
+
+    <!-- Link Up to Genome Browser -->
+    <div id="genome-browser-section">
+        <h3>Link Up to Genome Browser</h3>
+        <p id="genomic-range-info"></p>
+        <a id="genome-browser-link" href="#" target="_blank" class="genome-browser-link">Open UCSC Genome Browser 🔗</a>
+    </div>
 
     <!-- Evidence Data -->
     <h3>Related Literature</h3>
@@ -105,11 +143,11 @@ p.no-data {
                 <strong>Year of Publication:</strong> {{ evidence.pubYear }} <br>
                 <strong>Journal:</strong> {{ evidence.journal }} <br>
                 <strong>DOI:</strong> {{ evidence.doi }} <br>
-                <strong>PMID:</strong> 
-                    <a href="https://pubmed.ncbi.nlm.nih.gov/{{ evidence.pmid }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
-                        {{ evidence.pmid }} 🔗
-                    </a> 
-                    <br>
+                <strong>PMID:</strong>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/{{ evidence.pmid }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                    {{ evidence.pmid }} 🔗
+                </a>
+                <br>
                 <strong>Curator:</strong> {{ evidence.curator }} <br>
                 <strong>Relevant Text:</strong> {{ evidence.relevantText }} <br>
             </li>
@@ -119,5 +157,125 @@ p.no-data {
         <p>No related evidence found.</p>
     {% endif %}
 
+    <!-- Build target_data in JavaScript -->
+    <script>
+        const target_data = [
+            {% for target in target_data %}
+                {
+                    geneName: "{{ target.geneName|escapejs }}",
+                    geneID: "{{ target.geneID|escapejs }}",
+                    organ: "{{ target.organ|escapejs }}",
+                    tissue: "{{ target.tissue|escapejs }}",
+                    cell: "{{ target.cell|escapejs }}"
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // Get genome assembly from the template
+        const genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase(); // e.g., 'hg19', 'hg38'
+
+        let startPosition = 0;
+        let endPosition = 0;
+        let chromosomeNumber = '';
+
+        if (genomeAssemblyAsReported === 'hg19') {
+            // Use positions and chromosome as reported
+            startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
+            endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
+            chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
+        } else if (genomeAssemblyAsReported === 'hg38') {
+            // Use hg38 positions and chromosome
+            startPosition = Number("{{ item.hg38Start|default:'0'|escapejs }}");
+            endPosition = Number("{{ item.hg38End|default:'0'|escapejs }}");
+            chromosomeNumber = "{{ item.hg38Chromosome|default:''|escapejs }}";
+        } else {
+            // Default values or handle other assemblies if needed
+            startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
+            endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
+            chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
+        }
+    </script>
+
+    <script>
+        function fetchGenomicInfo(geneId) {
+            const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=${geneId}&retmode=json`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text(); // Get the response as text
+                })
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);
+                        if (!data.result || !data.result[geneId]) {
+                            throw new Error('Invalid data format received');
+                        }
+                        const genomicInfo = data.result[geneId].genomicinfo[0];
+
+                        const chrStart = parseInt(genomicInfo.chrstart, 10);
+                        const chrStop = parseInt(genomicInfo.chrstop, 10);
+                        const geneChr = chromosomeNumber || '1'; // Default to '1' if unavailable
+
+                        // Ensure that all values are valid numbers
+                        if (isNaN(chrStart) || isNaN(chrStop) || isNaN(startPosition) || isNaN(endPosition)) {
+                            throw new Error('One or more genomic positions are invalid.');
+                        }
+
+                        // Calculate min and max values
+                        const minValue = Math.min(chrStart, chrStop, startPosition, endPosition);
+                        const maxValue = Math.max(chrStart, chrStop, startPosition, endPosition);
+
+                        const db = genomeAssemblyAsReported; // 'hg19' or 'hg38'
+
+                        // Check if any variable is empty or invalid
+                        if (!db || !geneChr || isNaN(minValue) || isNaN(maxValue) || !minValue || !maxValue) {
+                            // Do not display the genome-browser-section
+                            console.warn('Required variables are missing or invalid. Not displaying genome-browser-section.');
+                        } else {
+                            // Display the genome-browser-section
+                            document.getElementById('genome-browser-section').style.display = 'block';
+
+                            // Display the genomic range information
+                            const genomicRangeInfo = `Genome Assembly: ${db}, Chromosome: ${geneChr}, Start Position: ${minValue}, End Position: ${maxValue}`;
+                            document.getElementById('genomic-range-info').innerHTML = genomicRangeInfo;
+
+                            // Construct the UCSC Genome Browser URL
+                            const position = `chr${geneChr}:${minValue}-${maxValue}`;
+                            const genomeBrowserUrl = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${db}&position=${encodeURIComponent(position)}`;
+
+                            // Set the link's href attribute to the constructed URL
+                            const genomeBrowserLink = document.getElementById('genome-browser-link');
+                            genomeBrowserLink.href = genomeBrowserUrl;
+                        }
+
+                    } catch (err) {
+                        console.error('Error parsing JSON:', err);
+                        console.error('Response text:', text);
+                        // Do not display the genome-browser-section
+                        console.warn('Error occurred. Not displaying genome-browser-section.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching genomic info:', error);
+                    // Do not display the genome-browser-section
+                    console.warn('Error occurred. Not displaying genome-browser-section.');
+                });
+        }
+
+        // Use DOMContentLoaded instead of window.onload
+        document.addEventListener('DOMContentLoaded', function() {
+            if (target_data.length > 0) {
+                const firstGeneID = target_data[0].geneID;
+                console.log(`Fetching genomic info for geneID: ${firstGeneID}`);
+                fetchGenomicInfo(firstGeneID);
+            } else {
+                // Do not display the genome-browser-section
+                console.warn('No target data available. Not displaying genome-browser-section.');
+            }
+        });
+    </script>
 </body>
 </html>
