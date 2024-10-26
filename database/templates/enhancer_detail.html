@@ -1,3 +1,4 @@
+Need to pass this: http://127.0.0.1:8000/enhancer/9/
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +108,7 @@
     <!-- Target Data -->
     <h3>Related Targets</h3>
     {% if target_data %}
-        <ul>
+        <ul id="related-targets-list">
         {% for target in target_data %}
             <li>
                 <strong>Gene Name:</strong> {{ target.geneName }} <br>
@@ -121,6 +122,8 @@
             </li>
         {% endfor %}
         </ul>
+        <!-- Container for dynamically generated genome browser sections -->
+        <div id="genome-browsers-container"></div>
     {% else %}
         <p>No related targets found.</p>
     {% endif %}
@@ -172,24 +175,24 @@
         ];
 
         // Get genome assembly from the template
-        const genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase(); // e.g., 'hg19', 'hg38'
+        let genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase(); // e.g., 'hg19', 'hg38'
+
+        let hg38Chromosome = "{{ item.hg38Chromosome|default:''|escapejs }}";
+        let hg38Start = Number("{{ item.hg38Start|default:'0'|escapejs }}");
+        let hg38End = Number("{{ item.hg38End|default:'0'|escapejs }}");
 
         let startPosition = 0;
         let endPosition = 0;
         let chromosomeNumber = '';
 
-        if (genomeAssemblyAsReported === 'hg19') {
-            // Use positions and chromosome as reported
-            startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
-            endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
-            chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
-        } else if (genomeAssemblyAsReported === 'hg38') {
-            // Use hg38 positions and chromosome
-            startPosition = Number("{{ item.hg38Start|default:'0'|escapejs }}");
-            endPosition = Number("{{ item.hg38End|default:'0'|escapejs }}");
-            chromosomeNumber = "{{ item.hg38Chromosome|default:''|escapejs }}";
+        // Check if hg38 fields are not empty and set genome assembly as 'hg38' if they are valid
+        if (hg38Chromosome && !isNaN(hg38Start) && hg38Start > 0 && !isNaN(hg38End) && hg38End > 0) {
+            genomeAssemblyAsReported = 'hg38';
+            startPosition = hg38Start;
+            endPosition = hg38End;
+            chromosomeNumber = hg38Chromosome;
         } else {
-            // Default values or handle other assemblies if needed
+            // Default to reported values or handle other assemblies if needed
             startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
             endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
             chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
@@ -197,85 +200,162 @@
     </script>
 
     <script>
-        function fetchGenomicInfo(geneId) {
-            const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=${geneId}&retmode=json`;
+    function fetchGenomicInfo(geneId, index) {
+        const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=${geneId}&retmode=json`;
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text(); // Get the response as text
+            })
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (!data.result || !data.result[geneId]) {
+                        throw new Error('Invalid data format received');
                     }
-                    return response.text(); // Get the response as text
-                })
-                .then(text => {
-                    try {
-                        const data = JSON.parse(text);
-                        if (!data.result || !data.result[geneId]) {
-                            throw new Error('Invalid data format received');
+
+                    // (Use your existing logic to find the genomic info based on the genome assembly)
+                    // Assuming `genomeAssemblyAsReported` is already defined elsewhere in your script
+                    // Define the required mappings
+                    const assemblyMap = {
+                                'hg19': { chraccver: 'NC_000001.10', assembly: 'GCF_000001405.25' }, // GRCh37
+                                'hg18': { chraccver: 'NC_000001.9', assembly: 'GCF_000001405.18' },  // NCBI36
+                                'hg17': { chraccver: 'NC_000001.8', assembly: 'GCF_000001405.13' },  // NCBI35
+
+                                'hg38': { chraccver: 'NC_000001.11', assembly: 'GCF_000001405.40' }, // GRCh38
+
+                                'mm9': { chraccver: 'NC_000067.5', assembly: 'GCF_000001635.19' },   // Mouse (GRCm37)
+                                //'mm10': { chraccver: 'NC_000067.6', assembly: 'GCF_000001635.20' },  // Mouse (GRCm38)
+                                'mm10': { chraccver: 'NC_000069.7', assembly: 'GCF_000001635.27' },  // Mouse (GRCm38)
+                                'mm39': { chraccver: 'NC_000067.7', assembly: 'GCF_000001635.27' },  // Mouse (GRCm39)
+                                'mm8': { chraccver: 'NC_000067.4', assembly: 'GCF_000001635.18' },   // Older Mouse Assembly
+
+                                'mm5': { chraccver: 'NC_000067.1', assembly: 'GCF_000001635.11' },   // Very old Mouse Assembly
+
+                                'C57BL/6J (NC_000076.4)': { chraccver: 'NC_000076.4', assembly: 'GCF_000001635.24' }, // Mouse strain-specific assembly
+
+                                'rn6': { chraccver: 'NC_005100.4', assembly: 'GCF_000001895.5' },    // Rat (Rnor_6.0)
+                                'rn5': { chraccver: 'NC_005100.3', assembly: 'GCF_000001895.4' },    // Rat (Rnor_5.0)
+
+                                'None': { chraccver: null, assembly: null } // If no genome assembly is reported
+                                };
+
+                    let genomicInfo;
+                    let assemblyDetails = assemblyMap[genomeAssemblyAsReported];
+
+                    if (assemblyDetails) {
+                        genomicInfo = data.result[geneId].genomicinfo.find(info => info.assemblyaccver === assemblyDetails.assembly);
+                        if (!genomicInfo) {
+                            genomicInfo = data.result[geneId].locationhist.find(hist => hist.assemblyaccver === assemblyDetails.assembly);
                         }
-                        const genomicInfo = data.result[geneId].genomicinfo[0];
-
-                        const chrStart = parseInt(genomicInfo.chrstart, 10);
-                        const chrStop = parseInt(genomicInfo.chrstop, 10);
-                        const geneChr = chromosomeNumber || '1'; // Default to '1' if unavailable
-
-                        // Ensure that all values are valid numbers
-                        if (isNaN(chrStart) || isNaN(chrStop) || isNaN(startPosition) || isNaN(endPosition)) {
-                            throw new Error('One or more genomic positions are invalid.');
-                        }
-
-                        // Calculate min and max values
-                        const minValue = Math.min(chrStart, chrStop, startPosition, endPosition);
-                        const maxValue = Math.max(chrStart, chrStop, startPosition, endPosition);
-
-                        const db = genomeAssemblyAsReported; // 'hg19' or 'hg38'
-
-                        // Check if any variable is empty or invalid
-                        if (!db || !geneChr || isNaN(minValue) || isNaN(maxValue) || !minValue || !maxValue) {
-                            // Do not display the genome-browser-section
-                            console.warn('Required variables are missing or invalid. Not displaying genome-browser-section.');
-                        } else {
-                            // Display the genome-browser-section
-                            document.getElementById('genome-browser-section').style.display = 'block';
-
-                            // Display the genomic range information
-                            const genomicRangeInfo = `Genome Assembly: ${db}, Chromosome: ${geneChr}, Start Position: ${minValue}, End Position: ${maxValue}`;
-                            document.getElementById('genomic-range-info').innerHTML = genomicRangeInfo;
-
-                            // Construct the UCSC Genome Browser URL
-                            const position = `chr${geneChr}:${minValue}-${maxValue}`;
-                            const genomeBrowserUrl = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${db}&position=${encodeURIComponent(position)}`;
-
-                            // Set the link's href attribute to the constructed URL
-                            const genomeBrowserLink = document.getElementById('genome-browser-link');
-                            genomeBrowserLink.href = genomeBrowserUrl;
-                        }
-
-                    } catch (err) {
-                        console.error('Error parsing JSON:', err);
-                        console.error('Response text:', text);
-                        // Do not display the genome-browser-section
-                        console.warn('Error occurred. Not displaying genome-browser-section.');
+                    } else {
+                        console.error('Genome assembly not supported or mapping missing.');
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching genomic info:', error);
-                    // Do not display the genome-browser-section
-                    console.warn('Error occurred. Not displaying genome-browser-section.');
-                });
+
+
+                    if (!genomicInfo) {
+                        console.warn(`No genomic information found for gene ID: ${geneId}. Reverting to original assembly.`);
+
+                        // Reset values to original reported values
+                        genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase();
+                        startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
+                        endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
+                        chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
+                    }
+
+                    assemblyDetails = assemblyMap[genomeAssemblyAsReported];
+                    if (assemblyDetails) {
+                        genomicInfo = data.result[geneId].genomicinfo.find(info => info.assemblyaccver === assemblyDetails.assembly);
+                        if (!genomicInfo) {
+                            genomicInfo = data.result[geneId].locationhist.find(hist => hist.assemblyaccver === assemblyDetails.assembly);
+                        }
+                    } else {
+                        console.error('Genome assembly not supported or mapping missing.');
+                        return;
+                    }
+
+                    const chrStart = parseInt(genomicInfo.chrstart, 10);
+                    const chrStop = parseInt(genomicInfo.chrstop, 10);
+                    const geneChr = chromosomeNumber || '1'; // Default to '1' if unavailable
+
+                    // Ensure all values are valid numbers
+                    if (isNaN(chrStart) || isNaN(chrStop)) {
+                        console.warn(`Invalid genomic position data for gene ID: ${geneId}.`);
+                        return;
+                    }
+
+                    const minValue = Math.min(chrStart, chrStop, startPosition, endPosition);
+                    const maxValue = Math.max(chrStart, chrStop, startPosition, endPosition);
+                    const db = genomeAssemblyAsReported;
+
+                    // Create a new genome browser section for each target
+                    createGenomeBrowserSection(geneId, geneChr, minValue, maxValue, db, index);
+                } catch (err) {
+                    console.error('Error parsing JSON:', err);
+                    console.error('Response text:', text);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching genomic info:', error);
+            });
+    }
+    function createGenomeBrowserSection(geneId, geneChr, minValue, maxValue, db, index) {
+        // Create a new div to contain the genome browser section for this target
+        const genomeBrowserSection = document.createElement('div');
+        genomeBrowserSection.className = 'genome-browser-section';
+        genomeBrowserSection.id = `genome-browser-section-${index}`;
+
+        // Create and populate the title and genomic range information
+        const title = document.createElement('h3');
+        title.textContent = `Link Up to Genome Browser for Gene ID: ${geneId}`;
+        const genomicRangeInfo = document.createElement('p');
+        genomicRangeInfo.id = `genomic-range-info-${index}`;
+        genomicRangeInfo.textContent = `Genome Assembly: ${db}, Chromosome: ${geneChr}, Start Position: ${minValue}, End Position: ${maxValue}`;
+
+        // Create the link to the UCSC Genome Browser
+        const genomeBrowserLink = document.createElement('a');
+        genomeBrowserLink.href = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${db}&position=chr${geneChr}:${minValue}-${maxValue}`;
+        genomeBrowserLink.target = '_blank';
+        genomeBrowserLink.className = 'genome-browser-link';
+        genomeBrowserLink.textContent = 'Open UCSC Genome Browser 🔗';
+
+        // Append the title, range info, and link to the section
+        genomeBrowserSection.appendChild(title);
+        genomeBrowserSection.appendChild(genomicRangeInfo);
+        genomeBrowserSection.appendChild(genomeBrowserLink);
+
+        // Append the section to the container below the related targets
+        const genomeBrowsersContainer = document.getElementById('genome-browsers-container');
+        if (genomeBrowsersContainer) {
+            genomeBrowsersContainer.appendChild(genomeBrowserSection);
+        } else {
+            console.error('Genome browsers container not found.');
         }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const genomeBrowsersContainer = document.getElementById('genome-browsers-container');
+        let lastProcessedGeneID = null; // Variable to store the last processed geneID
 
-        // Use DOMContentLoaded instead of window.onload
-        document.addEventListener('DOMContentLoaded', function() {
-            if (target_data.length > 0) {
-                const firstGeneID = target_data[0].geneID;
-                console.log(`Fetching genomic info for geneID: ${firstGeneID}`);
-                fetchGenomicInfo(firstGeneID);
-            } else {
-                // Do not display the genome-browser-section
-                console.warn('No target data available. Not displaying genome-browser-section.');
-            }
-        });
+        if (target_data.length > 0) {
+            // Loop through each target
+            target_data.forEach((target, index) => {
+                if (target.geneID === lastProcessedGeneID) {
+                    console.log(`Skipping duplicate geneID: ${target.geneID}`);
+                    return; // Skip processing if geneID is the same as the last one
+                }
+
+                console.log(`Fetching genomic info for geneID: ${target.geneID}`);
+                fetchGenomicInfo(target.geneID, index); // Fetch genomic info for unique geneID
+                lastProcessedGeneID = target.geneID; // Update the last processed geneID
+            });
+        } else {
+            console.warn('No target data available. Not displaying genome-browser-section.');
+        }
+    });
+
     </script>
 </body>
 </html>
