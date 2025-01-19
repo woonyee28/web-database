@@ -389,7 +389,7 @@
                     {% for enhancer in enhancers %}
                         <a href="{% url 'enhancer_detail' enhancer.enhancerID %}" id="deco">
                             <div class="card">
-                                <h2>Enhancer ID: {{ enhancer.enhancerID }}</h2>
+                                <h2>EVE ID: {{ enhancer.enhancerID }}</h2>
                                 <p><strong>Genome Assembly As Reported:</strong> {{ enhancer.genomeAssemblyAsReported }}</p>
                                 <p><strong>Chromosome Number As Reported:</strong> {{ enhancer.chromosomeNumberAsReported }}</p>
                                 <p><strong>Start Position As Reported:</strong> {{ enhancer.startAsReported }}</p>
@@ -404,7 +404,7 @@
                 {% for item in page_data %}
                     <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
                         <div class="card">
-                            <h2>Enhancer ID: {{ item.enhancerID }}</h2>
+                            <h2>EVE ID: {{ item.enhancerID }}</h2>
                             <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
                             <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
                             <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
