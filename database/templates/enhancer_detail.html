@@ -5,159 +5,245 @@
     <title>Enhancer Detail</title>
 </head>
 <style>
-    /* Your existing CSS styles */
+    /* Header/Navigation Bar */
+    .header-nav {
+        background-color: #009688;
+        padding: 10px 0;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Main Content Styles */
     body {
-        background-color: #000;
-        color: #eaeaea;
+        background-color: #fff;
+        color: #333;
         font-family: 'Arial', sans-serif;
         margin: 0;
+        padding: 0;
+    }
+
+    .content-area {
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 20px;
     }
 
     h1, h2, h3 {
-        color: #C8A2C8;
+        color: #009688;
+        margin-bottom: 15px;
+    }
+
+    h1 {
+        font-size: 24px;
+        padding-bottom: 10px;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-top: 0px;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #eee;
+        margin: 15px 0;
+    }
+
+    /* Section Styles */
+    .genomic-position, .conserved-sequence {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
         margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    p, li {
-        margin-bottom: 10px;
-        line-height: 1.6;
-    }
-
-    strong {
-        color: #D8BFD8;
-    }
-
+    /* List Styles */
     ul {
         list-style-type: none;
         padding-left: 0;
     }
 
     ul li {
-        background-color: #222;
-        border: 1px solid #C8A2C8;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 10px;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     ul li:hover {
-        background-color: #333;
-        border-color: #D8BFD8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     }
 
-    code {
-        display: block;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        background-color: #222;
-        padding: 15px;
-        border-radius: 5px;
-    }
-
-    a.genome-browser-link {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 10px 15px;
-        background-color: #C8A2C8;
-        color: #000;
+    /* Link Styles */
+    a {
         text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
+        color: #009688;
     }
 
-    a.genome-browser-link:hover {
-        background-color: #D8BFD8;
+    a:hover {
+        color: #00796b;
     }
 
-    p.no-data {
-        color: #ff6b6b;
+    .genome-browser-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #009688;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        margin-top: 5px;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    #genome-browser-section {
-        display: none;
+    .genome-browser-link:hover {
+        background-color: #00796b;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Text Styles */
+    p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    strong {
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Genome Browser Section */
+    .genome-browser-section {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Error Messages */
+    .no-data {
+        color: #dc3545;
+        padding: 10px;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+
+    /* External Link Icons */
+    a[target="_blank"]::after {
+        font-size: 0.9em;
     }
 </style>
 <body>
-    <h1>Enhancer Detail</h1>
+    <div class="header-nav">
+        <div class="nav-container">
+            <div class="main-nav">
+                <div class="logo">
+                    <h1 style="color: white; margin: 0;">Enhancers Data</h1>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Genomic Position as Originally Reported -->
-    <div class="genomic-position">
-        <h2>Genomic Position as Originally Reported</h2>
+    <div class="content-area">
+        <h1>Experimentally Validated Enhancers (EVE) ID: {{ item.enhancerID }}</h1>
+
+        <!-- Genomic Position as Originally Reported -->
+        <div class="genomic-position">
+            <h2>Genomic Position as Originally Reported</h2>
+            <hr>
+            <p><strong>Enhancer Name:</strong> {{ item.enhancerName }}</p>
+            <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
+            <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
+            <p><strong>End Position:</strong> {{ item.endAsReported }}</p>
+            <p><strong>Genome Assembly:</strong> {{ item.genomeAssemblyAsReported }}</p>
+            <p><strong>Organism:</strong> {{ item.organism }}</p>
+        </div>
+
+        <!-- Conserved Sequence found in Human hg38 Genome -->
+        <div class="conserved-sequence">
+            <h2>Sequence found in Human hg38 Genome</h2>
+            <hr>
+            <p><strong>hg38 Chromosome:</strong> {{ item.hg38Chromosome }}</p>
+            <p><strong>hg38 Start:</strong> {{ item.hg38Start }}</p>
+            <p><strong>hg38 End:</strong> {{ item.hg38End }}</p>
+        </div>
+
+        <!-- Target Data -->
+        <h2>Related Targets</h2>
         <hr>
-        <p><strong>Enhancer Name:</strong> {{ item.enhancerName }}</p>
-        <p><strong>Chromosome Number:</strong> {{ item.chromosomeNumberAsReported }}</p>
-        <p><strong>Start Position:</strong> {{ item.startAsReported }}</p>
-        <p><strong>End Position:</strong> {{ item.endAsReported }}</p>
-        <p><strong>Genome Assembly:</strong> {{ item.genomeAssemblyAsReported }}</p>
-        <p><strong>Organism:</strong> {{ item.organism }}</p>
-    </div>
+        {% if target_data %}
+            <ul id="related-targets-list">
+            {% for target in target_data %}
+                <li>
+                    <strong>Gene Name:</strong> {{ target.geneName }} <br>
+                    <strong>Gene ID:</strong>
+                    <a href="https://www.ncbi.nlm.nih.gov/gene/{{ target.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                        {{ target.geneID }} 🔗
+                    </a><br>
+                    <strong>Organ:</strong> {{ target.organ }} <br>
+                    <strong>Tissue:</strong> {{ target.tissue }} <br>
+                    <strong>Cell:</strong> {{ target.cell }} <br>
+                </li>
+            {% endfor %}
+            </ul>
+            <!-- Container for dynamically generated genome browser sections -->
+            <div id="genome-browsers-container"></div>
+        {% else %}
+            <p>No related targets found.</p>
+        {% endif %}
 
-    <!-- Conserved Sequence found in Human hg38 Genome -->
-    <div class="conserved-sequence">
-        <h2>Sequence found in Human hg38 Genome</h2>
+        <!-- Link Up to Genome Browser -->
+        <!-- <div id="genome-browser-section">
+            <h2>Link Up to Genome Browser</h2>
+            <hr>
+            <p id="genomic-range-info"></p>
+            <a id="genome-browser-link" href="#" target="_blank" class="genome-browser-link">Open UCSC Genome Browser 🔗</a>
+        </div> -->
+
+        <!-- Evidence Data -->
+        <h2>Related Literature</h2>
         <hr>
-        <p><strong>hg38 Chromosome:</strong> {{ item.hg38Chromosome }}</p>
-        <p><strong>hg38 Start:</strong> {{ item.hg38Start }}</p>
-        <p><strong>hg38 End:</strong> {{ item.hg38End }}</p>
+        {% if evidence_data %}
+            <ul>
+            {% for evidence in evidence_data %}
+                <li>
+                    <strong>Title:</strong> {{ evidence.title }} <br>
+                    <strong>First Author:</strong> {{ evidence.firstAuthor }} <br>
+                    <strong>Year of Publication:</strong> {{ evidence.pubYear }} <br>
+                    <strong>Journal:</strong> {{ evidence.journal }} <br>
+                    <strong>DOI:</strong> {{ evidence.doi }} <br>
+                    <strong>PMID:</strong>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/{{ evidence.pmid }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
+                        {{ evidence.pmid }} 🔗
+                    </a>
+                    <br>
+                    <strong>Curator:</strong> {{ evidence.curator }} <br>
+                    <strong>Relevant Text:</strong> {{ evidence.relevantText }} <br>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No related evidence found.</p>
+        {% endif %}
     </div>
-
-    <!-- Target Data -->
-    <h3>Related Targets</h3>
-    {% if target_data %}
-        <ul id="related-targets-list">
-        {% for target in target_data %}
-            <li>
-                <strong>Gene Name:</strong> {{ target.geneName }} <br>
-                <strong>Gene ID:</strong>
-                <a href="https://www.ncbi.nlm.nih.gov/gene/{{ target.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
-                    {{ target.geneID }} 🔗
-                </a><br>
-                <strong>Organ:</strong> {{ target.organ }} <br>
-                <strong>Tissue:</strong> {{ target.tissue }} <br>
-                <strong>Cell:</strong> {{ target.cell }} <br>
-            </li>
-        {% endfor %}
-        </ul>
-        <!-- Container for dynamically generated genome browser sections -->
-        <div id="genome-browsers-container"></div>
-    {% else %}
-        <p>No related targets found.</p>
-    {% endif %}
-
-    <!-- Link Up to Genome Browser -->
-    <div id="genome-browser-section">
-        <h3>Link Up to Genome Browser</h3>
-        <p id="genomic-range-info"></p>
-        <a id="genome-browser-link" href="#" target="_blank" class="genome-browser-link">Open UCSC Genome Browser 🔗</a>
-    </div>
-
-    <!-- Evidence Data -->
-    <h3>Related Literature</h3>
-    {% if evidence_data %}
-        <ul>
-        {% for evidence in evidence_data %}
-            <li>
-                <strong>Title:</strong> {{ evidence.title }} <br>
-                <strong>First Author:</strong> {{ evidence.firstAuthor }} <br>
-                <strong>Year of Publication:</strong> {{ evidence.pubYear }} <br>
-                <strong>Journal:</strong> {{ evidence.journal }} <br>
-                <strong>DOI:</strong> {{ evidence.doi }} <br>
-                <strong>PMID:</strong>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/{{ evidence.pmid }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
-                    {{ evidence.pmid }} 🔗
-                </a>
-                <br>
-                <strong>Curator:</strong> {{ evidence.curator }} <br>
-                <strong>Relevant Text:</strong> {{ evidence.relevantText }} <br>
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No related evidence found.</p>
-    {% endif %}
 
     <!-- Build target_data in JavaScript -->
     <script>
@@ -173,29 +259,35 @@
             {% endfor %}
         ];
 
-        // Get genome assembly from the template
-        let genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase(); // e.g., 'hg19', 'hg38'
+        // Simplify to only use originally reported values
+        let genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase();
+        let startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
+        let endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
+        let chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
+
+        // // Get genome assembly from the template
+        // let genomeAssemblyAsReported = "{{ item.genomeAssemblyAsReported|default:''|escapejs }}".toLowerCase(); // e.g., 'hg19', 'hg38'
 
         let hg38Chromosome = "{{ item.hg38Chromosome|default:''|escapejs }}";
         let hg38Start = Number("{{ item.hg38Start|default:'0'|escapejs }}");
         let hg38End = Number("{{ item.hg38End|default:'0'|escapejs }}");
 
-        let startPosition = 0;
-        let endPosition = 0;
-        let chromosomeNumber = '';
+        // let startPosition = 0;
+        // let endPosition = 0;
+        // let chromosomeNumber = '';
 
-        // Check if hg38 fields are not empty and set genome assembly as 'hg38' if they are valid
-        if (hg38Chromosome && !isNaN(hg38Start) && hg38Start > 0 && !isNaN(hg38End) && hg38End > 0) {
-            genomeAssemblyAsReported = 'hg38';
-            startPosition = hg38Start;
-            endPosition = hg38End;
-            chromosomeNumber = hg38Chromosome;
-        } else {
-            // Default to reported values or handle other assemblies if needed
-            startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
-            endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
-            chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
-        }
+        // // Check if hg38 fields are not empty and set genome assembly as 'hg38' if they are valid
+        // if (hg38Chromosome && !isNaN(hg38Start) && hg38Start > 0 && !isNaN(hg38End) && hg38End > 0) {
+        //     genomeAssemblyAsReported = 'hg38';
+        //     startPosition = hg38Start;
+        //     endPosition = hg38End;
+        //     chromosomeNumber = hg38Chromosome;
+        // } else {
+        //     // Default to reported values or handle other assemblies if needed
+        //     startPosition = Number("{{ item.startAsReported|default:'0'|escapejs }}");
+        //     endPosition = Number("{{ item.endAsReported|default:'0'|escapejs }}");
+        //     chromosomeNumber = "{{ item.chromosomeNumberAsReported|default:''|escapejs }}";
+        // }
     </script>
 
     <script>
@@ -308,11 +400,13 @@
         genomeBrowserSection.id = `genome-browser-section-${index}`;
 
         // Create and populate the title and genomic range information
-        const title = document.createElement('h3');
+        const title = document.createElement('h2');
         title.textContent = `Link Up to Genome Browser for Gene ID: ${geneId}`;
         const genomicRangeInfo = document.createElement('p');
         genomicRangeInfo.id = `genomic-range-info-${index}`;
         genomicRangeInfo.textContent = `Genome Assembly: ${db}, Chromosome: ${geneChr}, Start Position: ${minValue}, End Position: ${maxValue}`;
+
+        const linebreak = document.createElement('hr');
 
         // Create the link to the UCSC Genome Browser
         const genomeBrowserLink = document.createElement('a');
@@ -323,6 +417,7 @@
 
         // Append the title, range info, and link to the section
         genomeBrowserSection.appendChild(title);
+        genomeBrowserSection.appendChild(linebreak)
         genomeBrowserSection.appendChild(genomicRangeInfo);
         genomeBrowserSection.appendChild(genomeBrowserLink);
 

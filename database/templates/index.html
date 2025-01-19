@@ -5,16 +5,56 @@
     <title>Enhancers Data</title>
     <!-- Add any necessary CSS styles for card layout -->
     <style>
-        body {
-            background-color: #000; /* Black background */
-            color: #eaeaea; /* Light text color for contrast */
-            font-family: 'Arial', sans-serif;
+        .alphabet-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin: 15px 0;
         }
 
-        h1 {
-            color: #eaeaea; /* Light color for the heading */
+        .alphabet-buttons button {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
+        .alphabet-buttons button:hover {
+            background-color: #009688;
+            color: white;
+            border-color: #009688;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 150, 136, 0.3);
+        }
+
+        .alphabet-buttons button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 150, 136, 0.2);
+        }
+
+        /* Make the container responsive */
+        @media (max-width: 600px) {
+            .alphabet-buttons {
+                gap: 6px;
+            }
+
+            .alphabet-buttons button {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+        }
         .select-wrapper {
             position: relative;
             display: inline-block;
@@ -23,197 +63,379 @@
             margin-bottom: 20px;
         }
 
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 12px;
+            color: #666;
+        }
+
         select {
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             width: 100%;
             padding: 10px 15px;
-            border: 1px solid #C8A2C8; /* Lilac border */
-            border-radius: 5px;
-            background-color: #222; /* Dark background for input */
+            padding-right: 30px; /* Make room for the arrow */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
             font-size: 16px;
-            color: #eaeaea; /* Light text color */
+            color: #333;
             cursor: pointer;
             transition: all 0.3s ease;
-            outline: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         select:hover, select:focus {
-            border-color: #D8BFD8; /* Lighter lilac on hover */
-            box-shadow: 0 3px 8px rgba(216, 191, 216, 0.5);
+            border-color: #009688;
+            box-shadow: 0 3px 8px rgba(0, 150, 136, 0.2);
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        .select-wrapper::after {
-            content: '\25BC'; /* Downward arrow */
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: #eaeaea; /* Light arrow color */
+        /* Remove the text-decoration from specific elements */
+        .card h2, .card p a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Keep the teal color for clickable elements but without underline */
+        .card a:hover {
+            color: #009688;
+            text-decoration: none;
+        }
+
+        /* Navigation bar / Header styles */
+        .header-nav {
+            background-color: #009688; /* Teal color similar to ChEMBL */
+            padding: 10px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding: 10px 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Search bar styles */
+        .search-container {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-examples {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Rest of the page styles */
+        body {
+            background-color: #fff;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Content area styles */
+        .content-area {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            color: #009688;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        /* Existing component styles */
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 350px;
+            margin-bottom: 20px;
+        }
+    
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
             font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
+    
+        select:hover, select:focus {
+            border-color: #009688;
+            box-shadow: 0 3px 8px rgba(0, 150, 136, 0.2);
+        }
+    
         .input-group {
             display: flex;
             flex-wrap: nowrap;
             gap: 10px;
             margin-bottom: 20px;
         }
-
+    
         .input-group input[type="text"] {
             width: 100%;
             max-width: 300px;
             padding: 10px 15px;
-            border: 1px solid #C8A2C8; /* Lilac border */
-            border-radius: 5px;
-            background-color: #222; /* Dark background */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
             font-size: 16px;
-            color: #eaeaea; /* Light text color */
+            color: #333;
             outline: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+    
+        .input-group input[type="text"]:hover, .input-group input[type="text"]:focus {
+            border-color: #009688;
+            box-shadow: 0 3px 8px rgba(0, 150, 136, 0.2);
+        }
+    
+        .btn-search {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #009688;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        .btn-search:hover {
+            background-color: #00897b;
+        }
+
+        /* Cards and other components */
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Pagination */
+        .pagination a {
+            padding: 8px 12px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
             transition: all 0.3s ease;
         }
 
-        .input-group input[type="text"]:hover, .input-group input[type="text"]:focus {
-            border-color: #D8BFD8; /* Lighter lilac on hover */
-            box-shadow: 0 3px 8px rgba(216, 191, 216, 0.5);
-        }
-
-        .btn-search {
-            padding: 10px 20px;
-            border: 1px solid #C8A2C8; /* Lilac border */
-            border-radius: 5px;
-            background-color: #222; /* Dark background */
-            color: #eaeaea;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn-search:hover {
-            background-color: #444; /* Slightly lighter background on hover */
-            border-color: #D8BFD8; /* Lighter lilac on hover */
-        }
-
-        .alphabet-buttons {
-            display: none; /* Initially hidden */
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .alphabet-buttons button {
-            padding: 10px;
-            background-color: #222;
-            color: #eaeaea;
-            border: 1px solid #C8A2C8;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 40px;
-            text-align: center;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .alphabet-buttons button:hover {
-            background-color: #333; /* Slightly lighter dark on hover */
-            border-color: #D8BFD8; /* Lighter lilac on hover */
-        }
-
-        .card {
-            border: 1px solid #C8A2C8; /* Lilac border */
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background-color: #222; /* Dark background */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-            font-family: 'Arial', sans-serif;
-            color: #eaeaea; /* Light text color */
-        }
-
-        .card:hover {
-            background-color: #333; /* Slightly lighter dark on hover */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
-            transform: translateY(-5px);
-        }
-
-        #deco {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .pagination a {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: #222; /* Dark background */
-            border: 1px solid #C8A2C8; /* Lilac border */
-            border-radius: 3px;
-            margin-right: 5px;
-            color: #eaeaea; /* Light text color */
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
         .pagination a:hover {
-            background-color: #333; /* Slightly lighter dark on hover */
-            border-color: #D8BFD8; /* Lighter lilac on hover */
+            background-color: #f5f5f5;
+            border-color: #009688;
         }
 
         .pagination .current {
-            background-color: #C8A2C8; /* Lilac background for current page */
-            color: #000; /* Black text for contrast */
+            padding: 8px 12px;
+            background-color: #009688;
+            color: white;
+            border: 1px solid #009688;
+            border-radius: 4px;
         }
-
-        /* Add more styles as needed */
-    </style>
+</style>
 </head>
 <body>
-    <h1>Enhancers Data</h1>
-
-    {% if warning_message %}
-    <p style="color: red;"><strong>{{ warning_message }}</strong></p>
-    {% endif %}
-
-    <!-- Search bar -->
-    <form action="" method="GET" class="search-bar">
-        <div class="select-wrapper">
-            <select name="search_type" id="search_type" onchange="updateSearchFields()">
-                <option value="hg38" {% if request.GET.search_type == 'hg38' or request.GET.search_type is not defined %}selected{% endif %}>Search by hg38 Chromosome</option>
-                <option value="reported" {% if request.GET.search_type == 'reported' %}selected{% endif %}>Search by Chromosome as Reported</option>
-                <option value="target" {% if request.GET.search_type == 'target' %}selected{% endif %}>Search by Target (Gene)</option>
-            </select>
-        </div>
-
-        <!-- hg38 Chromosome Search Fields -->
-        <div id="hg38_fields" class="input-group" style="display: {% if request.GET.search_type == 'hg38' %}flex{% else %}none{% endif %};">
-            <input type="text" name="hg38_chromosome" placeholder="hg38 Chromosome" value="{{ request.GET.hg38_chromosome }}">
-        </div>
-
-        <!-- Chromosome as Reported Search Fields -->
-        <div id="reported_fields" class="input-group" style="display: {% if request.GET.search_type == 'reported' %}flex{% else %}none{% endif %};">
-            <div class="select-wrapper" style="margin-bottom: 0px;">
-            <select name="organism" id="organism" >
-                <option value="Human" {% if request.GET.organism == 'Human' %}selected{% endif %}>Human</option>
-                <option value="Mouse" {% if request.GET.organism == 'Mouse' %}selected{% endif %}>Mouse</option>
-            </select>
+    <!-- Header Navigation -->
+    <div class="header-nav">
+        <div class="nav-container">
+            <div class="main-nav">
+                <div class="logo">
+                    <h1 style="color: white; margin: 0;">Enhancers Data</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">About</a>
+                </div>
             </div>
-            <input type="text" name="chromosome_number" placeholder="Chromosome Number" value="{{ request.GET.chromosome_number }}">
+        </div>
+    </div>
+
+    <div class="content-area">
+        {% if warning_message %}
+        <p style="color: red;"><strong>{{ warning_message }}</strong></p>
+        {% endif %}
+
+        <!-- Search Container -->
+        <div class="search-container">
+            <form action="" method="GET" class="search-bar">
+                <div class="select-wrapper">
+                    <select name="search_type" id="search_type" onchange="updateSearchFields()">
+                        <option value="hg38" {% if request.GET.search_type == 'hg38' or request.GET.search_type is not defined %}selected{% endif %}>Search by hg38 Chromosome</option>
+                        <option value="reported" {% if request.GET.search_type == 'reported' %}selected{% endif %}>Search by Chromosome as Reported</option>
+                        <option value="target" {% if request.GET.search_type == 'target' %}selected{% endif %}>Search by Target (Gene)</option>
+                    </select>
+                </div>
+
+                <!-- Search Fields -->
+                <div id="hg38_fields" class="input-group" style="display: {% if request.GET.search_type == 'hg38' %}flex{% else %}none{% endif %};">
+                    <input type="text" name="hg38_chromosome" placeholder="hg38 Chromosome" value="{{ request.GET.hg38_chromosome }}">
+                </div>
+
+                <div id="reported_fields" class="input-group" style="display: {% if request.GET.search_type == 'reported' %}flex{% else %}none{% endif %};">
+                    <div class="select-wrapper" style="margin-bottom: 0px;">
+                        <select name="organism" id="organism">
+                            <option value="Human" {% if request.GET.organism == 'Human' %}selected{% endif %}>Human</option>
+                            <option value="Mouse" {% if request.GET.organism == 'Mouse' %}selected{% endif %}>Mouse</option>
+                        </select>
+                    </div>
+                    <input type="text" name="chromosome_number" placeholder="Chromosome Number" value="{{ request.GET.chromosome_number }}">
+                </div>
+
+                <div id="target_fields" class="alphabet-buttons">
+                    {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                    <button type="submit" name="target_gene" value="{{ letter }}">{{ letter }}</button>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn-search">Search</button>
+            </form>
         </div>
 
-        <!-- Target Search Fields -->
-        <div id="target_fields" class="alphabet-buttons">
-            {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-            <button type="submit" name="target_gene" value="{{ letter }}">{{ letter }}</button>
-            {% endfor %}
-        </div>
+        <!-- Results Section -->
+        <div class="results-section">
+            {% if search_type == 'target' and not target_clicked %}
+                {% for item in page_data %}
+                    <a href="?search_type=target&target_clicked={{ item.geneID }}" id="deco">
+                        <div class="card">
+                            <h2>Target Name: {{ item.geneName }}</h2>
+                            <p><strong>Target ID:</strong> 
+                                <a href="https://www.ncbi.nlm.nih.gov/gene/{{ item.geneID }}" target="_blank" style="color: #009688; text-decoration: none;">
+                                    {{ item.geneID }} 🔗
+                                </a>
+                            </p>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% elif target_clicked %}
+                <h2 class="page-title">Target: {{ target_info.geneName }}</h2>
+                <p><strong>Target ID:</strong> {{ target_info.geneID }}</p>
 
-        <button type="submit" class="btn-search">Search</button>
-    </form>
+                <h3>Related Enhancers</h3>
+                {% if enhancers %}
+                    {% for enhancer in enhancers %}
+                        <a href="{% url 'enhancer_detail' enhancer.enhancerID %}" id="deco">
+                            <div class="card">
+                                <h2>Enhancer ID: {{ enhancer.enhancerID }}</h2>
+                                <p><strong>Genome Assembly As Reported:</strong> {{ enhancer.genomeAssemblyAsReported }}</p>
+                                <p><strong>Chromosome Number As Reported:</strong> {{ enhancer.chromosomeNumberAsReported }}</p>
+                                <p><strong>Start Position As Reported:</strong> {{ enhancer.startAsReported }}</p>
+                                <p><strong>End Position As Reported:</strong> {{ enhancer.endAsReported }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p>No related enhancers found.</p>
+                {% endif %}
+            {% else %}
+                {% for item in page_data %}
+                    <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
+                        <div class="card">
+                            <h2>Enhancer ID: {{ item.enhancerID }}</h2>
+                            <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
+                            <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
+                            <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
+                            <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Pagination
+            <div class="pagination">
+                {% if page_data.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ page_data.previous_page_number }}">Previous</a>
+                {% endif %}
+            
+                {% for num in page_data.paginator.page_range %}
+                    {% if page_data.number == num %}
+                        <span class="current">{{ num }}</span>
+                    {% else %}
+                        <a href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+            
+                {% if page_data.has_next %}
+                    <a href="?page={{ page_data.next_page_number }}">Next</a>
+                    <a href="?page={{ page_data.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </div> -->
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -226,19 +448,16 @@
                 }
             });
 
-            // Initially update the fields based on the current selection
             updateSearchFields(initialSearchType);
         });
 
         function updateSearchFields(initialSearchType) {
             const searchType = document.getElementById('search_type').value;
 
-            // Hide all fields initially
             document.getElementById('hg38_fields').style.display = 'none';
             document.getElementById('reported_fields').style.display = 'none';
             document.getElementById('target_fields').style.display = 'none';
 
-            // Show relevant fields based on search type
             if (searchType === 'hg38') {
                 document.getElementById('hg38_fields').style.display = 'flex';
             } else if (searchType === 'reported') {
@@ -247,86 +466,10 @@
                 document.getElementById('target_fields').style.display = 'flex';
             }
 
-            // Only submit the form if the search type was actually changed
             if (searchType !== initialSearchType) {
                 document.querySelector('.search-bar').submit();
             }
         }
     </script>
-    
-    
-    <!-- Cards displaying search results -->
-    {% if search_type == 'target' and not target_clicked %}
-        {% for item in page_data %}
-            <a href="?search_type=target&target_clicked={{ item.geneID }}" id="deco">
-                <div class="card">
-                    <h2>Target Name: {{ item.geneName }}</h2>
-                    <p><strong>Target ID:</strong> 
-                        <a href="https://www.ncbi.nlm.nih.gov/gene/{{ item.geneID }}" target="_blank" style="color: #D8BFD8; text-decoration: none;">
-                            {{ item.geneID }} 🔗
-                        </a>
-                    </p>
-                </div>
-            </a>
-        {% endfor %}
-    {% elif target_clicked %}
-        <h2>Target: {{ target_info.geneName }}</h2>
-        <p><strong>Target ID:</strong> {{ target_info.geneID }}</p>
-
-        <h3>Related Enhancers</h3>
-        {% if enhancers %}
-            {% for enhancer in enhancers %}
-                <a href="{% url 'enhancer_detail' enhancer.enhancerID %}" id="deco">
-                    <div class="card">
-                        <h2>Enhancer ID: {{ enhancer.enhancerID }}</h2>
-                        <p><strong>Genome Assembly As Reported:</strong> {{ enhancer.genomeAssemblyAsReported }}</p>
-                        <p><strong>Chromosome Number As Reported:</strong> {{ enhancer.chromosomeNumberAsReported }}</p>
-                        <p><strong>Start Position As Reported:</strong> {{ enhancer.startAsReported }}</p>
-                        <p><strong>End Position As Reported:</strong> {{ enhancer.endAsReported }}</p>
-                    </div>
-                </a>
-            {% endfor %}
-        {% else %}
-            <p>No related enhancers found.</p>
-        {% endif %}
-    {% else %}
-        {% for item in page_data %}
-            <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
-                <div class="card">
-                    <h2>Enhancer ID: {{ item.enhancerID }}</h2>
-                    <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
-                    <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
-                    <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
-                    <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
-                </div>
-            </a>
-        {% endfor %}
-    {% endif %}
-
-
-    
-
-    <!-- Pagination controls -->
-    <div class="pagination">
-        {% if page_data.has_previous %}
-            <a href="?page=1" id="deco">&laquo; First</a>
-            <a href="?page={{ page_data.previous_page_number }}" id="deco">Previous</a>
-        {% endif %}
-    
-        {% for num in page_data.paginator.page_range %}
-            {% if page_data.number == num %}
-                <span class="current" >{{ num }}</span>
-            {% else %}
-                <a href="?page={{ num }}" id="deco">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-    
-        {% if page_data.has_next %}
-            <a href="?page={{ page_data.next_page_number }}" id="deco">Next</a>
-            <a href="?page={{ page_data.paginator.num_pages }}" id="deco">Last &raquo;</a>
-        {% endif %}
-    </div>
-
-    
 </body>
 </html>
