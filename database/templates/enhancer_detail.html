@@ -179,7 +179,7 @@
 
         <!-- Conserved Sequence found in Human hg38 Genome -->
         <div class="conserved-sequence">
-            <h2>Sequence found in Human hg38 Genome</h2>
+            <h2>Homologous sequence found in Human hg38 Genome</h2>
             <hr>
             <p><strong>hg38 Chromosome:</strong> {{ item.hg38Chromosome }}</p>
             <p><strong>hg38 Start:</strong> {{ item.hg38Start }}</p>
@@ -187,7 +187,7 @@
         </div>
 
         <!-- Target Data -->
-        <h2>Related Targets</h2>
+        <h2>Target Gene(s)</h2>
         <hr>
         {% if target_data %}
             <ul id="related-targets-list">
@@ -207,7 +207,7 @@
             <!-- Container for dynamically generated genome browser sections -->
             <div id="genome-browsers-container"></div>
         {% else %}
-            <p>No related targets found.</p>
+            <p>No target gene found.</p>
         {% endif %}
 
         <!-- Link Up to Genome Browser -->
@@ -401,7 +401,7 @@
 
         // Create and populate the title and genomic range information
         const title = document.createElement('h2');
-        title.textContent = `Link Up to Genome Browser for Gene ID: ${geneId}`;
+        title.textContent = `Link out...`; //${geneId}
         const genomicRangeInfo = document.createElement('p');
         genomicRangeInfo.id = `genomic-range-info-${index}`;
         genomicRangeInfo.textContent = `Genome Assembly: ${db}, Chromosome: ${geneChr}, Start Position: ${minValue}, End Position: ${maxValue}`;
