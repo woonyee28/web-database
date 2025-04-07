@@ -227,6 +227,7 @@
                 <li>
                     <strong>Title:</strong> {{ evidence.title }} <br>
                     <strong>First Author:</strong> {{ evidence.firstAuthor }} <br>
+                    <strong>Type of Assay:</strong> {{ evidence.methodAssay }} <br>
                     <strong>Year of Publication:</strong> {{ evidence.pubYear }} <br>
                     <strong>Journal:</strong> {{ evidence.journal }} <br>
                     <strong>DOI:</strong> {{ evidence.doi }} <br>
@@ -235,8 +236,8 @@
                         {{ evidence.pmid }} 🔗
                     </a>
                     <br>
-                    <strong>Curator:</strong> {{ evidence.curator }} <br>
                     <strong>Relevant Text:</strong> {{ evidence.relevantText }} <br>
+                    <strong>Curated By:</strong> {{ evidence.curator }} <br>
                 </li>
             {% endfor %}
             </ul>
