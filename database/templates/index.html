@@ -368,52 +368,63 @@
         <!-- Results Section -->
         <div class="results-section">
             {% if search_type == 'target' and not target_clicked %}
-                {% for item in page_data %}
-                    <a href="?search_type=target&target_clicked={{ item.geneID }}" id="deco">
-                        <div class="card">
-                            <h2>Target Name: {{ item.geneName }}</h2>
-                            <p><strong>Target ID:</strong> 
-                                <a href="https://www.ncbi.nlm.nih.gov/gene/{{ item.geneID }}" target="_blank" style="color: #009688; text-decoration: none;">
-                                    {{ item.geneID }} 🔗
-                                </a>
-                            </p>
-                        </div>
-                    </a>
+                {% regroup page_data by geneID as grouped_data %}
+                {% for group in grouped_data %}
+                    {% with item=group.list.0 %}
+                        {% if item.geneName and item.geneName != "unknown" and item.geneName != "Unknown" %}
+                            <a href="?search_type=target&target_clicked={{ item.geneID }}" id="deco">
+                                <div class="card">
+                                    <h2>Target Name: {{ item.geneName }}</h2>
+                                    <p><strong>Target ID:</strong> 
+                                        <a href="https://www.ncbi.nlm.nih.gov/gene/{{ item.geneID }}" target="_blank" style="color: #009688; text-decoration: none;">
+                                            {{ item.geneID }} 🔗
+                                        </a>
+                                    </p>
+                                </div>
+                            </a>
+                        {% endif %}
+                    {% endwith %}
                 {% endfor %}
             {% elif target_clicked %}
                 <h2 class="page-title">Target: {{ target_info.geneName }}</h2>
                 <p><strong>Target ID:</strong> {{ target_info.geneID }}</p>
-
+        
                 <h3>Related Enhancers</h3>
                 {% if enhancers %}
-                    {% for enhancer in enhancers %}
-                        <a href="{% url 'enhancer_detail' enhancer.enhancerID %}" id="deco">
-                            <div class="card">
-                                <h2>EVE ID: {{ enhancer.enhancerID }}</h2>
-                                <p><strong>Genome Assembly As Reported:</strong> {{ enhancer.genomeAssemblyAsReported }}</p>
-                                <p><strong>Chromosome Number As Reported:</strong> {{ enhancer.chromosomeNumberAsReported }}</p>
-                                <p><strong>Start Position As Reported:</strong> {{ enhancer.startAsReported }}</p>
-                                <p><strong>End Position As Reported:</strong> {{ enhancer.endAsReported }}</p>
-                            </div>
-                        </a>
+                    {% regroup enhancers by enhancerID as grouped_enhancers %}
+                    {% for group in grouped_enhancers %}
+                        {% with enhancer=group.list.0 %}
+                            <a href="{% url 'enhancer_detail' enhancer.enhancerID %}" id="deco">
+                                <div class="card">
+                                    <h2>EVE ID: {{ enhancer.enhancerID }}</h2>
+                                    <p><strong>Genome Assembly As Reported:</strong> {{ enhancer.genomeAssemblyAsReported }}</p>
+                                    <p><strong>Chromosome Number As Reported:</strong> {{ enhancer.chromosomeNumberAsReported }}</p>
+                                    <p><strong>Start Position As Reported:</strong> {{ enhancer.startAsReported }}</p>
+                                    <p><strong>End Position As Reported:</strong> {{ enhancer.endAsReported }}</p>
+                                </div>
+                            </a>
+                        {% endwith %}
                     {% endfor %}
                 {% else %}
                     <p>No related enhancers found.</p>
                 {% endif %}
             {% else %}
-                {% for item in page_data %}
-                    <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
-                        <div class="card">
-                            <h2>EVE ID: {{ item.enhancerID }}</h2>
-                            <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
-                            <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
-                            <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
-                            <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
-                        </div>
-                    </a>
+                {% regroup page_data by enhancerID as grouped_enhancers %}
+                {% for group in grouped_enhancers %}
+                    {% with item=group.list.0 %}
+                        <a href="{% url 'enhancer_detail' item.enhancerID %}" id="deco">
+                            <div class="card">
+                                <h2>EVE ID: {{ item.enhancerID }}</h2>
+                                <p><strong>Genome Assembly As Reported:</strong> {{ item.genomeAssemblyAsReported }}</p>
+                                <p><strong>Chromosome Number As Reported:</strong> {{ item.chromosomeNumberAsReported }}</p>
+                                <p><strong>Start Position As Reported:</strong> {{ item.startAsReported }}</p>
+                                <p><strong>End Position As Reported:</strong> {{ item.endAsReported }}</p>
+                            </div>
+                        </a>
+                    {% endwith %}
                 {% endfor %}
             {% endif %}
-
+        
             <!-- Pagination
             <div class="pagination">
                 {% if page_data.has_previous %}
@@ -434,6 +445,7 @@
                     <a href="?page={{ page_data.paginator.num_pages }}">Last &raquo;</a>
                 {% endif %}
             </div> -->
+        </div>
         </div>
     </div>
 
